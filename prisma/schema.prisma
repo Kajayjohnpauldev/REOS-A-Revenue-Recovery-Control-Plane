@@ -1,6 +1,15 @@
 // RevivalOS — Prisma schema (SQLite).
-// Provider is SQLite for a zero-setup local build. Switching to Postgres is a
-// one-line change (provider + DATABASE_URL). Full models are added in Step 1.
+//
+// MONEY UNIT: every integer money field (Case.amount, LedgerEntry.amount,
+// Policy.amountThreshold) is in WHOLE INR RUPEES. (Razorpay's API natively uses
+// paise; that conversion is a // TODO(revivalos): do-at-the-adapter-boundary
+// concern — in mock mode fixtures are authored directly in rupees for clarity.)
+//
+// LANES (Case.lane): payment_failure | abandoned_checkout | failed_subscription
+//                    | overdue_receivable | dispute_refund
+//
+// SQLite is used for a zero-setup local build. Switching to Postgres is a
+// one-line change (datasource provider + DATABASE_URL); the models are portable.
 
 generator client {
   provider = "prisma-client-js"
@@ -9,4 +18,153 @@ generator client {
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+model Merchant {
+  id          String   @id @default(cuid())
+  name        String
+  environment String   @default("test")
+  createdAt   DateTime @default(now())
+
+  policies Policy[]
+  cases    Case[]
+}
+
+model User {
+  id    String @id @default(cuid())
+  name  String
+  email String @unique
+  role  String @default("operator")
+}
+
+model RawEvent {
+  id             String   @id @default(cuid())
+  type           String
+  payload        Json
+  idempotencyKey String   @unique
+  receivedAt     DateTime @default(now())
+  orderIndex     Int
+  caseId         String?
+  case           Case?    @relation(fields: [caseId], references: [id])
+
+  @@index([caseId])
+  @@index([orderIndex])
+}
+
+model Case {
+  id                  String   @id @default(cuid())
+  merchantId          String
+  merchant            Merchant @relation(fields: [merchantId], references: [id])
+  lane                String
+  entityType          String
+  entityId            String
+  amount              Int
+  currency            String   @default("INR")
+  createdAt           DateTime @default(now())
+  dueAt               DateTime?
+  currentState        String
+  failureClass        String?
+  attemptCount        Int      @default(0)
+  consentState        String   @default("unknown")
+  proposedAction      String?
+  approvalState       String   @default("none")
+  actionResult        String?
+  recoveryAttribution Int      @default(0)
+  reversalStatus      String   @default("none")
+  policyVersion       Int?
+  reasonCode          String?
+  confidence          Float?
+  updatedAt           DateTime @updatedAt
+
+  events         RawEvent[]
+  toolCalls      ToolCall[]
+  messages       Message[]
+  humanDecisions HumanDecision[]
+  ledgerEntries  LedgerEntry[]
+  holdout        HoldoutAssignment?
+
+  @@index([lane])
+  @@index([approvalState])
+  @@index([merchantId])
+}
+
+model Policy {
+  id               String   @id @default(cuid())
+  merchantId       String
+  merchant         Merchant @relation(fields: [merchantId], references: [id])
+  version          Int
+  retryBudget      Int
+  amountThreshold  Int
+  dueAgeDays       Int
+  allowedChannels  String
+  maxDiscountPct   Int
+  autoApproveClasses String
+  consentRequired  Boolean  @default(true)
+  createdAt        DateTime @default(now())
+
+  @@unique([merchantId, version])
+}
+
+model Message {
+  id               String   @id @default(cuid())
+  caseId           String
+  case             Case     @relation(fields: [caseId], references: [id])
+  channel          String
+  status           String
+  body             String
+  consentChecked   Boolean
+  darkPatternPassed Boolean
+  createdAt        DateTime @default(now())
+
+  @@index([caseId])
+}
+
+model ToolCall {
+  id        String   @id @default(cuid())
+  caseId    String
+  case      Case     @relation(fields: [caseId], references: [id])
+  agent     String
+  tool      String
+  args      Json
+  result    Json?
+  allowed   Boolean
+  createdAt DateTime @default(now())
+
+  @@index([caseId])
+  @@index([allowed])
+}
+
+model HumanDecision {
+  id        String   @id @default(cuid())
+  caseId    String
+  case      Case     @relation(fields: [caseId], references: [id])
+  userId    String
+  decision  String
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@index([caseId])
+}
+
+// APPEND-ONLY ledger: rows are only ever created, never updated or deleted.
+// A refund/dispute is represented as a NEGATIVE amount entry that auto-corrects
+// net recovery. This is the ONLY place money state changes (via ledger.append).
+model LedgerEntry {
+  id        String   @id @default(cuid())
+  caseId    String
+  case      Case     @relation(fields: [caseId], references: [id])
+  type      String
+  amount    Int
+  note      String
+  createdAt DateTime @default(now())
+
+  @@index([caseId])
+  @@index([type])
+}
+
+model HoldoutAssignment {
+  id     String @id @default(cuid())
+  caseId String @unique
+  case   Case   @relation(fields: [caseId], references: [id])
+  group  String // "treatment" | "holdout"
 }
