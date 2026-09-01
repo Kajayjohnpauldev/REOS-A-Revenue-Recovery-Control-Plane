@@ -37,7 +37,7 @@ const BASE_PROBABILITY: Record<string, number> = {
   chargeback_recovered: 0.5,
 };
 
-const MESSAGING_ACTIONS = new Set([
+export const MESSAGING_ACTIONS = new Set([
   "send_retry_link",
   "send_reminder",
   "send_invoice_reminder",

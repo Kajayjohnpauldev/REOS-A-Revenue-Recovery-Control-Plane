@@ -168,3 +168,13 @@ model HoldoutAssignment {
   case   Case   @relation(fields: [caseId], references: [id])
   group  String // "treatment" | "holdout"
 }
+
+// Per-agent overrides. Absent row -> the registry default applies. Editing an
+// agent's tool allowlist (Step 10) writes here and the action layer enforces it.
+model AgentConfig {
+  id        String   @id @default(cuid())
+  agentKey  String   @unique
+  allowlist String // csv of tool names
+  enabled   Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}

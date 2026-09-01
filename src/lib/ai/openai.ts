@@ -1,3 +1,4 @@
+import { PROMPTS } from "@/lib/agents/prompts";
 import type {
   AIProvider,
   ClassifyInput,
@@ -56,23 +57,17 @@ export class OpenAIProvider implements AIProvider {
   }
 
   async classify(input: ClassifyInput): Promise<ClassifyOutput> {
-    return this.chatJson<ClassifyOutput>(
-      "You classify payment/collection failures. Reply ONLY as JSON with keys: failureClass, reasonCode, confidence (0..1), abstained (boolean). Set abstained=true and confidence<=0.3 if you cannot tell.",
-      JSON.stringify(input),
-    );
+    return this.chatJson<ClassifyOutput>(PROMPTS.classify, JSON.stringify(input));
   }
 
   async draftMessage(input: DraftMessageInput): Promise<DraftMessageOutput> {
     return this.chatJson<DraftMessageOutput>(
-      "You write short, honest, non-manipulative customer recovery messages (no false urgency, scarcity, or guilt). Reply ONLY as JSON with keys: subject, body.",
+      PROMPTS.draftMessage,
       JSON.stringify(input),
     );
   }
 
   async extractReply(input: ExtractReplyInput): Promise<ExtractReplyOutput> {
-    return this.chatJson<ExtractReplyOutput>(
-      "You extract intent from a customer reply. Reply ONLY as JSON with keys: intent (promise_to_pay|dispute|refuse|question|unknown), promiseToPayDate (ISO or omit), disputeReason (or omit), confidence (0..1), abstained (boolean).",
-      input.text,
-    );
+    return this.chatJson<ExtractReplyOutput>(PROMPTS.extractReply, input.text);
   }
 }
