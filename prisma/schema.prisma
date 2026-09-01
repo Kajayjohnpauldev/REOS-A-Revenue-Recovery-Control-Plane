@@ -1,0 +1,12 @@
+// RevivalOS — Prisma schema (SQLite).
+// Provider is SQLite for a zero-setup local build. Switching to Postgres is a
+// one-line change (provider + DATABASE_URL). Full models are added in Step 1.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
