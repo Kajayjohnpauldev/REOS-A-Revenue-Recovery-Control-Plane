@@ -100,7 +100,7 @@ export function useAgents() {
   });
 }
 
-export function useCaseAction(id?: string) {
+export function useCaseAction() {
   const invalidate = useInvalidateAll();
   return useMutation({
     mutationFn: (input: { caseId: string; action: string; note?: string }) =>

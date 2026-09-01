@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAgents, useSaveAllowlist } from "@/lib/hooks";
-import { formatAge, titleCase } from "@/lib/format";
+import { formatAge } from "@/lib/format";
 import type { AgentInfo } from "@/lib/api-types";
 
 export default function AgentsPage() {

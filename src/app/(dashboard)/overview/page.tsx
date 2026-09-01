@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { KpiCard } from "@/components/kpi/KpiCard";
-import { StatusPill } from "@/components/ui-ext/StatusPill";
 import { MoneyText } from "@/components/ui-ext/MoneyText";
 import { RecoveryTrendChart } from "@/components/charts/RecoveryTrendChart";
 import { Skeleton } from "@/components/ui/skeleton";

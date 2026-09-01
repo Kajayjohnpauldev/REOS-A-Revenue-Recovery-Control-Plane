@@ -47,10 +47,12 @@ export type ReplaySummary = {
 
 export type ReplayResult = { rows: ReplayRow[]; summary: ReplaySummary };
 
-export async function runReplay(opts?: {
+export async function runReplay(_opts?: {
   lanes?: string[];
   holdoutPct?: number;
 }): Promise<ReplayResult> {
+  // The six moments are fixed fixtures; _opts (lanes/holdoutPct) is reserved for
+  // future filtering and does not change the deterministic run.
   resetMockOverrides();
   const rz = getRazorpayAdapter();
   const policy = await getActivePolicyLike();

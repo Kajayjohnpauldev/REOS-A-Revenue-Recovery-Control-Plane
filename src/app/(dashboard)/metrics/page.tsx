@@ -47,10 +47,12 @@ export default function MetricsPage() {
         description="The scoreboard and the receipts — all ten measures, with a one-click audit export."
         actions={
           <div className="flex gap-2">
-            <a href="/api/export/json" className={cn(buttonVariants({ variant: "outline", size: "sm" }), "gap-1.5")}>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- API download, not a page nav */}
+            <a href="/api/export/json" download className={cn(buttonVariants({ variant: "outline", size: "sm" }), "gap-1.5")}>
               <Download className="size-4" /> JSON
             </a>
-            <a href="/api/export/csv" className={cn(buttonVariants({ variant: "default", size: "sm" }), "gap-1.5")}>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- API download, not a page nav */}
+            <a href="/api/export/csv" download className={cn(buttonVariants({ variant: "default", size: "sm" }), "gap-1.5")}>
               <Download className="size-4" /> Export audit (CSV)
             </a>
           </div>

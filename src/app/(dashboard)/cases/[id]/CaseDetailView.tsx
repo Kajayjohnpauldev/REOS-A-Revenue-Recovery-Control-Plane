@@ -35,7 +35,7 @@ const KIND_ICON = {
 
 export function CaseDetailView({ id }: { id: string }) {
   const { data, isLoading, isError } = useCaseDetail(id);
-  const action = useCaseAction(id);
+  const action = useCaseAction();
   const [note, setNote] = useState("");
 
   if (isLoading) {

@@ -1,4 +1,4 @@
-import { parseJson, ok } from "@/lib/api";
+import { ok } from "@/lib/api";
 import { WebhookSchema } from "@/lib/schemas";
 import { ingestWebhook } from "@/lib/services/ingestion";
 

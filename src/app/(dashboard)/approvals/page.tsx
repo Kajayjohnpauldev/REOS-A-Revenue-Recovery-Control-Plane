@@ -7,7 +7,6 @@ import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
-import { StatusPill } from "@/components/ui-ext/StatusPill";
 import { MoneyText } from "@/components/ui-ext/MoneyText";
 import { useApprovals, useCaseAction, usePolicies, useSavePolicy } from "@/lib/hooks";
 import { titleCase } from "@/lib/format";
