@@ -1,4 +1,6 @@
-import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { Suspense } from "react";
+import { PageHeader } from "@/components/shell/PageHeader";
+import { CasesTable } from "./CasesTable";
 
 export default function CasesPage() {
   return (
@@ -7,7 +9,9 @@ export default function CasesPage() {
         title="Cases"
         description="Every at-risk revenue event, reconciled against live state, with its proposed action."
       />
-      <EmptyState hint="The dense, filterable case table and detail drawer come online in the next build." />
+      <Suspense fallback={null}>
+        <CasesTable />
+      </Suspense>
     </div>
   );
 }

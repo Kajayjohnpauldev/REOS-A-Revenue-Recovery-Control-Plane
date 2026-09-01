@@ -187,6 +187,15 @@ export async function getLaneSummaries(): Promise<LaneSummary[]> {
   });
 }
 
+export async function getRecentActivity(limit = 8) {
+  return prisma.toolCall.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    include: { case: { select: { entityId: true, lane: true } } },
+  });
+}
+export type RecentActivity = Awaited<ReturnType<typeof getRecentActivity>>;
+
 export type TrendPoint = { date: string; recovered: number; refunds: number; net: number };
 
 /** Cumulative recovery trend from the immutable ledger, by day. */
