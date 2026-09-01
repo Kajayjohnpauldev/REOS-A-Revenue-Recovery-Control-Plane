@@ -21,32 +21,52 @@ const FIXTURES: Record<string, FixtureState> = Object.fromEntries(
   ) as [string, FixtureState][],
 );
 
+const SETTLED_FOR: Record<EntityType, string> = {
+  payment: "captured",
+  order: "paid",
+  subscription: "charged",
+  invoice: "paid",
+  dispute: "won",
+};
+
 /**
  * MockRazorpay — deterministic adapter backed by prisma/fixtures.
  *
  * CRITICAL: the fixtures can return a CURRENT live state that CONTRADICTS an
- * incoming webhook. e.g. a "payment.failed" webhook arrives, but
- * getPaymentState("pay_STALE001") returns "captured". That contradiction is
+ * incoming webhook (e.g. a "payment.failed" webhook arrives, but
+ * getPaymentState("pay_STALE001") returns "captured"). That contradiction is
  * what makes reconciliation a real no-op instead of a staged demo.
+ *
+ * An in-memory overlay (`overrides`) lets a successfully-executed action
+ * transition an entity to its settled status, so a subsequent re-read reflects
+ * the capture — recovery is only ever recorded after that re-read.
  */
 export class MockRazorpay implements RazorpayAdapter {
   readonly name = "mock";
+
+  private static overrides = new Map<string, string>();
+
+  /** Reset the overlay to the pristine fixture baseline (used by replay). */
+  static resetOverrides(): void {
+    MockRazorpay.overrides.clear();
+  }
 
   async getEntityState(
     entityType: EntityType,
     id: string,
   ): Promise<EntityState> {
+    const overlay = MockRazorpay.overrides.get(id);
     const f = FIXTURES[id];
-    if (!f) {
+    if (!f && overlay === undefined) {
       return { entityType, id, status: "unknown", found: false };
     }
     return {
-      entityType: (f.entityType as EntityType) ?? entityType,
+      entityType: (f?.entityType as EntityType) ?? entityType,
       id,
-      status: f.status,
-      amount: f.amount,
+      status: overlay ?? f!.status,
+      amount: f?.amount,
       found: true,
-      raw: f as Record<string, unknown>,
+      raw: { ...(f ?? {}), overlay: overlay ?? null },
     };
   }
 
@@ -61,6 +81,10 @@ export class MockRazorpay implements RazorpayAdapter {
   }
   getInvoiceState(id: string) {
     return this.getEntityState("invoice", id);
+  }
+
+  async markRecovered(entityType: EntityType, entityId: string): Promise<void> {
+    MockRazorpay.overrides.set(entityId, SETTLED_FOR[entityType] ?? "captured");
   }
 
   private async runAction(
@@ -83,8 +107,6 @@ export class MockRazorpay implements RazorpayAdapter {
   }
 
   retryCharge(id: string, opts?: ActionOpts) {
-    // If live state already shows success, the retry simply confirms it;
-    // otherwise the charge is left pending for the next cycle.
     return this.runAction(
       "retryCharge",
       id,
@@ -126,4 +148,9 @@ export class MockRazorpay implements RazorpayAdapter {
       "Submitted the evidence packet for the dispute.",
     );
   }
+}
+
+/** Reset the mock live-state overlay to the fixture baseline. */
+export function resetMockOverrides(): void {
+  MockRazorpay.resetOverrides();
 }

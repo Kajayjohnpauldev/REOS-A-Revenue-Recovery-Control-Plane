@@ -46,4 +46,13 @@ export interface RazorpayAdapter {
   sendPaymentLink(id: string, opts?: ActionOpts): Promise<ActionOutcome>;
   cancelSubscription(id: string, opts?: ActionOpts): Promise<ActionOutcome>;
   submitDisputeEvidence(id: string, opts?: ActionOpts): Promise<ActionOutcome>;
+
+  /**
+   * Model a successful intervention (mock only): transition the entity to its
+   * settled status so a subsequent get*State re-read reflects the capture.
+   * Recovery is only ever recorded AFTER re-reading this live state, so the
+   * "verified capture" invariant holds. The real adapter omits this — there,
+   * capture is confirmed by Razorpay itself.
+   */
+  markRecovered?(entityType: EntityType, entityId: string): Promise<void>;
 }
