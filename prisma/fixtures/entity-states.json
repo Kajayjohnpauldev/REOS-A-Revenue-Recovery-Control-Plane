@@ -1,0 +1,18 @@
+{
+  "_comment": "Live entity states returned by MockRazorpay.get*State(). These represent Razorpay's CURRENT truth, re-read before acting. Note pay_STALE001 and order_AC108/inv_OK312: the live state CONTRADICTS an incoming 'failed'/'unpaid' webhook, which is what makes reconciliation a real no-op instead of a staged one.",
+  "pay_STALE001": { "entityType": "payment", "status": "captured", "amount": 4999, "contradiction": "webhook said failed; live state is captured" },
+  "pay_LOW014": { "entityType": "payment", "status": "captured", "amount": 899 },
+  "pay_INS022": { "entityType": "payment", "status": "failed", "amount": 12500 },
+  "pay_HV031": { "entityType": "payment", "status": "failed", "amount": 68000 },
+  "order_AC101": { "entityType": "order", "status": "created", "amount": 2999 },
+  "order_AC108": { "entityType": "order", "status": "paid", "amount": 5499, "contradiction": "checkout looked abandoned; live order is paid" },
+  "order_AC115": { "entityType": "order", "status": "created", "amount": 1799 },
+  "sub_STOP201": { "entityType": "subscription", "status": "pending", "amount": 499 },
+  "sub_RTY208": { "entityType": "subscription", "status": "pending", "amount": 799 },
+  "sub_OK214": { "entityType": "subscription", "status": "active", "amount": 1299 },
+  "inv_HV301": { "entityType": "invoice", "status": "overdue", "amount": 74999 },
+  "inv_STD308": { "entityType": "invoice", "status": "overdue", "amount": 18000 },
+  "inv_OK312": { "entityType": "invoice", "status": "paid", "amount": 22000, "contradiction": "invoice looked overdue; live state is paid" },
+  "disp_DR401": { "entityType": "dispute", "status": "open", "amount": 15000 },
+  "pay_DR408": { "entityType": "payment", "status": "captured", "amount": 8999 }
+}

@@ -1,0 +1,118 @@
+[
+  {
+    "lane": "payment_failure",
+    "type": "payment.failed",
+    "idempotencyKey": "wh_pf_001",
+    "orderIndex": 0,
+    "entityType": "payment",
+    "entityId": "pay_STALE001",
+    "amount": 4999,
+    "signature": "mock_valid",
+    "payload": { "entity": "payment", "id": "pay_STALE001", "status": "failed", "amount": 4999, "error_code": "BAD_REQUEST_ERROR" }
+  },
+  {
+    "lane": "payment_failure",
+    "type": "payment.captured",
+    "idempotencyKey": "wh_pf_002",
+    "orderIndex": 1,
+    "entityType": "payment",
+    "entityId": "pay_STALE001",
+    "amount": 4999,
+    "signature": "mock_valid",
+    "note": "Live state already captured -> reconcile returns a NO-OP (already_paid).",
+    "payload": { "entity": "payment", "id": "pay_STALE001", "status": "captured", "amount": 4999 }
+  },
+  {
+    "lane": "payment_failure",
+    "type": "payment.failed",
+    "idempotencyKey": "wh_pf_001",
+    "orderIndex": 0,
+    "entityType": "payment",
+    "entityId": "pay_STALE001",
+    "amount": 4999,
+    "signature": "mock_valid",
+    "note": "DUPLICATE of wh_pf_001 -> ingestion must dedupe on idempotencyKey (no second case, no second charge).",
+    "payload": { "entity": "payment", "id": "pay_STALE001", "status": "failed", "amount": 4999, "error_code": "BAD_REQUEST_ERROR" }
+  },
+  {
+    "lane": "abandoned_checkout",
+    "type": "order.created",
+    "idempotencyKey": "wh_ac_001",
+    "orderIndex": 0,
+    "entityType": "order",
+    "entityId": "order_AC101",
+    "amount": 2999,
+    "signature": "mock_valid",
+    "payload": { "entity": "order", "id": "order_AC101", "status": "created", "amount": 2999 }
+  },
+  {
+    "lane": "failed_subscription",
+    "type": "subscription.pending",
+    "idempotencyKey": "wh_sub_ooo_1",
+    "orderIndex": 1,
+    "entityType": "subscription",
+    "entityId": "sub_RTY208",
+    "amount": 799,
+    "signature": "mock_valid",
+    "note": "OUT-OF-ORDER: arrives BEFORE its predecessor (orderIndex 0). Reconcile must sort by orderIndex, not arrival time.",
+    "payload": { "entity": "subscription", "id": "sub_RTY208", "status": "pending", "attempt": 2 }
+  },
+  {
+    "lane": "failed_subscription",
+    "type": "subscription.pending",
+    "idempotencyKey": "wh_sub_ooo_0",
+    "orderIndex": 0,
+    "entityType": "subscription",
+    "entityId": "sub_RTY208",
+    "amount": 799,
+    "signature": "mock_valid",
+    "payload": { "entity": "subscription", "id": "sub_RTY208", "status": "pending", "attempt": 1 }
+  },
+  {
+    "lane": "failed_subscription",
+    "type": "subscription.pending",
+    "idempotencyKey": "wh_sub_stop_3",
+    "orderIndex": 2,
+    "entityType": "subscription",
+    "entityId": "sub_STOP201",
+    "amount": 499,
+    "signature": "mock_valid",
+    "note": "3rd failed retry (attempt == retryBudget) -> policy stop rule halts the subscription.",
+    "payload": { "entity": "subscription", "id": "sub_STOP201", "status": "pending", "attempt": 3 }
+  },
+  {
+    "lane": "overdue_receivable",
+    "type": "invoice.overdue",
+    "idempotencyKey": "wh_or_001",
+    "orderIndex": 0,
+    "entityType": "invoice",
+    "entityId": "inv_HV301",
+    "amount": 74999,
+    "signature": "mock_valid",
+    "note": "Above amountThreshold -> routed to human review.",
+    "payload": { "entity": "invoice", "id": "inv_HV301", "status": "overdue", "amount": 74999 }
+  },
+  {
+    "lane": "dispute_refund",
+    "type": "payment.dispute.created",
+    "idempotencyKey": "wh_dr_001",
+    "orderIndex": 0,
+    "entityType": "dispute",
+    "entityId": "disp_DR401",
+    "amount": 15000,
+    "signature": "mock_valid",
+    "payload": { "entity": "dispute", "id": "disp_DR401", "status": "open", "amount": 15000, "reason": "product_not_received" }
+  },
+  {
+    "lane": "dispute_refund",
+    "type": "refund.processed",
+    "idempotencyKey": "wh_dr_refund",
+    "orderIndex": 1,
+    "entityType": "payment",
+    "entityId": "pay_DR408",
+    "amount": 8999,
+    "signature": "mock_valid",
+    "note": "A previously-recovered payment is refunded -> ledger appends a NEGATIVE entry and net auto-corrects.",
+    "payload": { "entity": "refund", "id": "rfnd_DR408", "payment_id": "pay_DR408", "status": "processed", "amount": 8999 }
+  }
+]
