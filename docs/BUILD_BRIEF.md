@@ -1,8 +1,7 @@
 # The build brief
 
 ReOS was built end-to-end from a detailed, phased brief. This document captures that
-brief so anyone can see exactly what was asked for and reproduce the build from
-scratch. The kickoff research that informed it lives in [`docs/research/`](research).
+brief so anyone can see exactly what was asked for and reproduce the build from scratch.
 
 ---
 

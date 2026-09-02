@@ -253,7 +253,6 @@ docs/
   architecture.md agents.md metrics.md the six layers · the 7 agents · every formula
   BUILD_BRIEF.md                       the original brief this was built from (reference)
   assets/                              README diagrams & charts (SVG)
-  research/                            the research notes provided at kickoff
 ```
 
 ---
@@ -262,8 +261,7 @@ docs/
 
 This project was built end-to-end from a detailed, phased brief. That original brief —
 the step-by-step build plan and the laws it had to follow — is captured for reference in
-**[`docs/BUILD_BRIEF.md`](docs/BUILD_BRIEF.md)**, alongside the kickoff research in
-[`docs/research/`](docs/research). Deeper docs:
+**[`docs/BUILD_BRIEF.md`](docs/BUILD_BRIEF.md)**. Deeper docs:
 
 - [`docs/architecture.md`](docs/architecture.md) — the six layers + diagram
 - [`docs/agents.md`](docs/agents.md) — the seven agents (AI vs deterministic)

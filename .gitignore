@@ -43,6 +43,11 @@ yarn-error.log*
 # build output
 /dist
 
+# agent/editor tooling (not part of the project)
+/AGENTS.md
+/CLAUDE.md
+/.claude/
+
 # vercel
 .vercel
 
