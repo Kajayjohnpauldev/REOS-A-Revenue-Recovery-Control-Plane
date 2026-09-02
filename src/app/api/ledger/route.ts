@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 
   const entries = await prisma.ledgerEntry.findMany({
     where,
-    include: { case: { select: { lane: true, entityId: true } } },
+    include: { case: { select: { lane: true, entityId: true, customerName: true } } },
     orderBy: { createdAt: "desc" },
   });
 

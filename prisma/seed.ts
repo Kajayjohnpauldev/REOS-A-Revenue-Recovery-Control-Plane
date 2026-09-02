@@ -18,8 +18,29 @@
  * below carries an out-of-order arrival pair (orderIndex vs receivedAt disagree).
  */
 import { PrismaClient, Prisma } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
+
+// Real-sounding customer/company names, keyed by case. Shown instead of the raw
+// entity id in the UI.
+const CUSTOMER_NAMES: Record<string, string> = {
+  "pf-stale-paid": "Meridian Textiles",
+  "pf-low-recovered": "Anaya Kapoor",
+  "pf-insufficient": "Rohan Malhotra",
+  "pf-highvalue-escalate": "Sterling Logistics",
+  "ac-consented": "Kavya Reddy",
+  "ac-recovered": "Vikram Nair",
+  "ac-no-consent": "Ishaan Gupta",
+  "sub-stop-budget": "Priya Sharma",
+  "sub-retrying": "Aditya Rao",
+  "sub-recovered": "Neha Verma",
+  "or-highvalue": "Himalaya Foods",
+  "or-standard": "Coastal Traders",
+  "or-recovered": "Deccan Analytics",
+  "dr-dispute": "Arjun Mehta",
+  "dr-recovered": "Lotus Retail Co.",
+};
 
 const NOW = new Date("2026-09-01T09:00:00.000Z");
 const daysAgo = (d: number) => new Date(NOW.getTime() - d * 86_400_000);
@@ -102,8 +123,48 @@ async function main() {
   const merchant = await prisma.merchant.create({
     data: { name: "Lumina Commerce", environment: "test" },
   });
+  // Users across the four roles. Passwords are bcrypt-hashed.
+  const [pwAdmin, pwOp, pwAnalyst, pwAuditor] = await Promise.all([
+    bcrypt.hash("12345619", 10),
+    bcrypt.hash("operator123", 10),
+    bcrypt.hash("analyst123", 10),
+    bcrypt.hash("auditor123", 10),
+  ]);
+  await prisma.user.create({
+    data: {
+      name: "Ajay John Paul",
+      email: "ajay@lumina.example",
+      role: "admin",
+      title: "Founder & Admin",
+      passwordHash: pwAdmin,
+    },
+  });
   const user = await prisma.user.create({
-    data: { name: "Aarav Mehta", email: "ops@lumina.example", role: "operator" },
+    data: {
+      name: "Aarav Mehta",
+      email: "aarav@lumina.example",
+      role: "operator",
+      title: "Recovery Operator",
+      passwordHash: pwOp,
+    },
+  });
+  await prisma.user.create({
+    data: {
+      name: "Sara Iyer",
+      email: "sara@lumina.example",
+      role: "analyst",
+      title: "Finance Analyst",
+      passwordHash: pwAnalyst,
+    },
+  });
+  await prisma.user.create({
+    data: {
+      name: "Devan Rao",
+      email: "devan@lumina.example",
+      role: "auditor",
+      title: "Compliance Auditor",
+      passwordHash: pwAuditor,
+    },
   });
   const policy = await prisma.policy.create({
     data: {
@@ -738,6 +799,7 @@ async function main() {
         lane: c.lane,
         entityType: c.entityType,
         entityId: c.entityId,
+        customerName: CUSTOMER_NAMES[c.key] ?? c.entityId,
         amount: c.amount,
         currency: "INR",
         createdAt: c.createdAt,

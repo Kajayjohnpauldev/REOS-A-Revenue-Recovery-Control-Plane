@@ -11,6 +11,7 @@ type Refusal = {
   caseId: string;
   lane: string;
   entityId: string;
+  customerName: string;
   createdAt: string;
   detail?: string;
 };
@@ -26,12 +27,12 @@ export async function GET() {
   const [blockedTools, rejectedMessages] = await Promise.all([
     prisma.toolCall.findMany({
       where: { allowed: false },
-      include: { case: { select: { lane: true, entityId: true } } },
+      include: { case: { select: { lane: true, entityId: true, customerName: true } } },
       orderBy: { createdAt: "desc" },
     }),
     prisma.message.findMany({
       where: { darkPatternPassed: false },
-      include: { case: { select: { lane: true, entityId: true } } },
+      include: { case: { select: { lane: true, entityId: true, customerName: true } } },
       orderBy: { createdAt: "desc" },
     }),
   ]);
@@ -46,6 +47,7 @@ export async function GET() {
       caseId: t.caseId,
       lane: t.case.lane,
       entityId: t.case.entityId,
+      customerName: t.case.customerName,
       createdAt: t.createdAt.toISOString(),
     })),
     ...rejectedMessages.map((m) => ({
@@ -57,6 +59,7 @@ export async function GET() {
       caseId: m.caseId,
       lane: m.case.lane,
       entityId: m.case.entityId,
+      customerName: m.case.customerName,
       createdAt: m.createdAt.toISOString(),
       detail: m.body,
     })),

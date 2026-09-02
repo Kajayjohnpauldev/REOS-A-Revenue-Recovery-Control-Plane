@@ -12,6 +12,7 @@ import { MoneyText } from "@/components/ui-ext/MoneyText";
 import { NativeSelect } from "@/components/ui-ext/NativeSelect";
 import { KpiCard } from "@/components/kpi/KpiCard";
 import { useLedger, useSimulateRefund } from "@/lib/hooks";
+import { usePerms } from "@/lib/auth/context";
 import { formatDateTime, formatINR } from "@/lib/format";
 import { LANES, LANE_LABELS } from "@/lib/types";
 import type { LedgerEntryWithCase } from "@/lib/api-types";
@@ -39,6 +40,7 @@ export default function LedgerPage() {
 
   const { data, isLoading } = useLedger(search.toString());
   const refund = useSimulateRefund();
+  const perms = usePerms();
 
   const entries = data?.entries ?? [];
   const totals = data?.totals;
@@ -62,9 +64,11 @@ export default function LedgerPage() {
             <Button size="sm" variant="outline" onClick={() => downloadCsv(entries)}>
               <Download className="size-4" /> Export CSV
             </Button>
-            <Button size="sm" onClick={simulate} disabled={refund.isPending}>
-              <RotateCcw className="size-4" /> Simulate refund
-            </Button>
+            {perms.ledgerTools && (
+              <Button size="sm" onClick={simulate} disabled={refund.isPending}>
+                <RotateCcw className="size-4" /> Simulate refund
+              </Button>
+            )}
           </div>
         }
       />
@@ -126,8 +130,11 @@ export default function LedgerPage() {
                   </td>
                   <td className="px-4 py-2.5 text-muted-foreground">{e.note}</td>
                   <td className="px-4 py-2.5">
-                    <Link href={`/cases/${e.caseId}`} className="font-mono text-xs hover:underline">
-                      {e.case.entityId}
+                    <Link href={`/cases/${e.caseId}`} className="hover:underline">
+                      <span className="text-sm">{e.case.customerName || e.case.entityId}</span>
+                      <span className="ml-1.5 font-mono text-[11px] text-muted-foreground">
+                        {e.case.entityId}
+                      </span>
                     </Link>
                   </td>
                   <td className="px-4 py-2.5 text-xs text-muted-foreground">{formatDateTime(e.createdAt)}</td>

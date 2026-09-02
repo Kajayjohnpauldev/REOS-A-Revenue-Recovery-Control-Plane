@@ -1,12 +1,17 @@
+import { NextResponse } from "next/server";
 import { parseJson, ok, notFound } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { AllowlistSchema } from "@/lib/schemas";
 import { getAgentDef } from "@/lib/agents/registry";
+import { sessionWithPerm } from "@/lib/auth/current";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  if (!(await sessionWithPerm("editAgents"))) {
+    return NextResponse.json({ error: "Not permitted for your role" }, { status: 403 });
+  }
   const { id } = await params;
   if (!getAgentDef(id)) return notFound("Unknown agent");
 

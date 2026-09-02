@@ -15,6 +15,7 @@ import { PageHeader } from "@/components/shell/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { buttonVariants } from "@/components/ui/button";
 import { RecoveryTrendChart } from "@/components/charts/RecoveryTrendChart";
+import { LaneDonut } from "@/components/charts/LaneDonut";
 import { useMetrics } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 import { CHART } from "@/lib/chartColors";
@@ -99,9 +100,14 @@ export default function MetricsPage() {
             </ChartCard>
           </div>
 
-          <ChartCard title="Recovery over time" subtitle="Cumulative gross vs net">
-            <RecoveryTrendChart data={data?.trend ?? []} />
-          </ChartCard>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <ChartCard title="Recovered by lane" subtitle="Share of verified recovery">
+              <LaneDonut data={data?.lanes ?? []} metric="recoveredValue" />
+            </ChartCard>
+            <ChartCard title="Recovery over time" subtitle="Cumulative gross vs net">
+              <RecoveryTrendChart data={data?.trend ?? []} />
+            </ChartCard>
+          </div>
 
           {/* Rate bars */}
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">

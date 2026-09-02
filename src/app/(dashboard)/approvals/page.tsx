@@ -77,12 +77,15 @@ export default function ApprovalsPage() {
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/cases/${it.case.id}`}
-                        className="font-mono text-sm font-medium hover:underline"
+                        className="text-sm font-medium hover:underline"
                       >
-                        {it.case.entityId}
+                        {it.case.customerName || it.case.entityId}
                       </Link>
+                      <span className="font-mono text-xs text-muted-foreground">
+                        {it.case.entityId}
+                      </span>
                       <span className="text-xs text-muted-foreground">
-                        {LANE_LABELS[it.case.lane as LaneName] ?? it.case.lane}
+                        · {LANE_LABELS[it.case.lane as LaneName] ?? it.case.lane}
                       </span>
                     </div>
                     <p className="mt-0.5 text-xs text-muted-foreground">

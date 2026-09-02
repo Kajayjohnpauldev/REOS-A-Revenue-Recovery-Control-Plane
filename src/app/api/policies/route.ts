@@ -1,6 +1,8 @@
+import { NextResponse } from "next/server";
 import { parseJson, ok, badRequest } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { PolicySchema } from "@/lib/schemas";
+import { sessionWithPerm } from "@/lib/auth/current";
 
 export async function GET() {
   const policies = await prisma.policy.findMany({
@@ -11,6 +13,9 @@ export async function GET() {
 
 /** Creating a policy always creates a NEW version — never an in-place edit. */
 export async function POST(request: Request) {
+  if (!(await sessionWithPerm("editPolicy"))) {
+    return NextResponse.json({ error: "Not permitted for your role" }, { status: 403 });
+  }
   const parsed = await parseJson(PolicySchema, request);
   if (!parsed.ok) return parsed.res;
 

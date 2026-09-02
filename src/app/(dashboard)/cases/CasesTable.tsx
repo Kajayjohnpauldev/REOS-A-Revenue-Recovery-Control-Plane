@@ -28,6 +28,7 @@ import { MoneyText } from "@/components/ui-ext/MoneyText";
 import { NativeSelect } from "@/components/ui-ext/NativeSelect";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCases, useBulkAction } from "@/lib/hooks";
+import { usePerms } from "@/lib/auth/context";
 import type { CaseWithHoldout } from "@/lib/api-types";
 import { formatAge, titleCase } from "@/lib/format";
 import { LANES, LANE_LABELS, type LaneName } from "@/lib/types";
@@ -90,6 +91,7 @@ export function CasesTable() {
   const { data, isLoading } = useCases(search);
   const cases = data?.cases ?? [];
   const bulk = useBulkAction();
+  const perms = usePerms();
 
   const columns = useMemo<ColumnDef<CaseWithHoldout>[]>(
     () => [
@@ -114,12 +116,15 @@ export function CasesTable() {
         enableSorting: false,
       },
       {
-        accessorKey: "entityId",
-        header: "Case",
+        accessorKey: "customerName",
+        header: "Customer",
         cell: ({ row }) => (
           <div className="min-w-0">
-            <p className="truncate font-mono text-xs font-medium">{row.original.entityId}</p>
-            <p className="truncate text-[11px] text-muted-foreground">
+            <p className="truncate text-sm font-medium">
+              {row.original.customerName || row.original.entityId}
+            </p>
+            <p className="truncate font-mono text-[11px] text-muted-foreground">
+              {row.original.entityId} ·{" "}
               {row.original.holdout?.group === "holdout" ? "holdout" : "treatment"}
             </p>
           </div>
@@ -191,9 +196,14 @@ export function CasesTable() {
     [],
   );
 
+  const visibleColumns = useMemo(
+    () => (perms.approveCases ? columns : columns.filter((c) => c.id !== "select")),
+    [columns, perms.approveCases],
+  );
+
   const table = useReactTable({
     data: cases,
-    columns,
+    columns: visibleColumns,
     state: { sorting, rowSelection },
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
@@ -275,7 +285,7 @@ export function CasesTable() {
       </div>
 
       {/* Bulk action bar */}
-      {selectedIds.length > 0 && (
+      {perms.approveCases && selectedIds.length > 0 && (
         <div className="flex items-center gap-2 rounded-lg border bg-accent/40 px-3 py-2">
           <span className="text-sm font-medium">{selectedIds.length} selected</span>
           <div className="ml-auto flex gap-1.5">
@@ -315,7 +325,7 @@ export function CasesTable() {
             {isLoading ? (
               Array.from({ length: 6 }).map((_, i) => (
                 <tr key={i} className="border-b">
-                  <td colSpan={columns.length} className="px-3 py-3">
+                  <td colSpan={visibleColumns.length} className="px-3 py-3">
                     <Skeleton className="h-6 w-full" />
                   </td>
                 </tr>
@@ -337,7 +347,7 @@ export function CasesTable() {
               ))
             ) : (
               <tr>
-                <td colSpan={columns.length} className="px-3 py-10 text-center text-sm text-muted-foreground">
+                <td colSpan={visibleColumns.length} className="px-3 py-10 text-center text-sm text-muted-foreground">
                   No cases match these filters.
                 </td>
               </tr>
@@ -352,8 +362,11 @@ export function CasesTable() {
           {drawer && (
             <>
               <SheetHeader className="border-b">
-                <SheetTitle className="font-mono text-sm">{drawer.entityId}</SheetTitle>
+                <SheetTitle className="text-base">
+                  {drawer.customerName || drawer.entityId}
+                </SheetTitle>
                 <SheetDescription>
+                  <span className="font-mono">{drawer.entityId}</span> ·{" "}
                   {LANE_LABELS[drawer.lane as LaneName] ?? drawer.lane}
                 </SheetDescription>
               </SheetHeader>

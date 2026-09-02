@@ -14,6 +14,7 @@ import { PageHeader } from "@/components/shell/PageHeader";
 import { KpiCard } from "@/components/kpi/KpiCard";
 import { MoneyText } from "@/components/ui-ext/MoneyText";
 import { RecoveryTrendChart } from "@/components/charts/RecoveryTrendChart";
+import { LaneDonut } from "@/components/charts/LaneDonut";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMetrics, useApprovals } from "@/lib/hooks";
 import { formatINRShort, formatINR, formatAge, titleCase } from "@/lib/format";
@@ -94,6 +95,18 @@ export default function OverviewPage() {
             )}
           </section>
 
+          <section className="rounded-xl border bg-card p-5 shadow-sm">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-sm font-semibold">At-risk value by lane</h2>
+              <span className="text-xs text-muted-foreground">where the risk sits</span>
+            </div>
+            {metrics.isLoading ? (
+              <Skeleton className="h-52 w-full" />
+            ) : (
+              <LaneDonut data={lanes} metric="atRiskValue" />
+            )}
+          </section>
+
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {LANE_TILES.map((tile) => {
               const l = lanes.find((x) => x.lane === tile.lane);
@@ -143,7 +156,9 @@ export default function OverviewPage() {
                     className="flex items-center justify-between gap-3 px-5 py-3 transition-colors hover:bg-accent/40"
                   >
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">{it.case.entityId}</p>
+                      <p className="truncate text-sm font-medium">
+                        {it.case.customerName || it.case.entityId}
+                      </p>
                       <p className="truncate text-xs text-muted-foreground">
                         {LANE_LABELS[it.case.lane as LaneName] ?? it.case.lane} ·{" "}
                         {titleCase(it.decision.proposedAction)}

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAgents, useSaveAllowlist } from "@/lib/hooks";
+import { usePerms } from "@/lib/auth/context";
 import { formatAge } from "@/lib/format";
 import type { AgentInfo } from "@/lib/api-types";
 
@@ -37,6 +38,7 @@ export default function AgentsPage() {
 
 function AgentCard({ agent }: { agent: AgentInfo }) {
   const save = useSaveAllowlist();
+  const perms = usePerms();
   const [tools, setTools] = useState<string[]>(agent.allowlist);
   const [draft, setDraft] = useState("");
 
@@ -81,32 +83,36 @@ function AgentCard({ agent }: { agent: AgentInfo }) {
             tools.map((t) => (
               <span key={t} className="flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 font-mono text-[11px]">
                 {t}
-                <button type="button" onClick={() => remove(t)} className="text-muted-foreground hover:text-destructive">
-                  <X className="size-3" />
-                </button>
+                {perms.editAgents && (
+                  <button type="button" onClick={() => remove(t)} className="text-muted-foreground hover:text-destructive">
+                    <X className="size-3" />
+                  </button>
+                )}
               </span>
             ))
           ) : (
             <span className="text-xs text-muted-foreground">No tools — agent disabled</span>
           )}
         </div>
-        <div className="mt-2 flex gap-1.5">
-          <Input
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), add())}
-            placeholder="add a tool…"
-            className="h-7 text-xs"
-          />
-          <Button size="icon-sm" variant="outline" onClick={add} aria-label="Add tool">
-            <Plus className="size-3.5" />
-          </Button>
-          {dirty && (
-            <Button size="sm" onClick={persist} disabled={save.isPending}>
-              Save
+        {perms.editAgents && (
+          <div className="mt-2 flex gap-1.5">
+            <Input
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), add())}
+              placeholder="add a tool…"
+              className="h-7 text-xs"
+            />
+            <Button size="icon-sm" variant="outline" onClick={add} aria-label="Add tool">
+              <Plus className="size-3.5" />
             </Button>
-          )}
-        </div>
+            {dirty && (
+              <Button size="sm" onClick={persist} disabled={save.isPending}>
+                Save
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       <p className="mt-3 text-xs text-muted-foreground">

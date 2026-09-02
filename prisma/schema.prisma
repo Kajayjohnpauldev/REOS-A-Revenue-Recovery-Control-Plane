@@ -31,10 +31,13 @@ model Merchant {
 }
 
 model User {
-  id    String @id @default(cuid())
-  name  String
-  email String @unique
-  role  String @default("operator")
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  role         String   @default("operator") // admin | operator | analyst | auditor
+  title        String?
+  passwordHash String   @default("")
+  createdAt    DateTime @default(now())
 }
 
 model RawEvent {
@@ -58,6 +61,7 @@ model Case {
   lane                String
   entityType          String
   entityId            String
+  customerName        String   @default("")
   amount              Int
   currency            String   @default("INR")
   createdAt           DateTime @default(now())

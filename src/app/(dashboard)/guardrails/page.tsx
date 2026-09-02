@@ -70,7 +70,11 @@ export default function GuardrailsPage() {
                     </span>
                   </Row>
                   <Row label="Case">
-                    {r.entityId} · {LANE_LABELS[r.lane as LaneName] ?? r.lane}
+                    {r.customerName || r.entityId}{" "}
+                    <span className="font-mono text-xs text-muted-foreground">
+                      ({r.entityId})
+                    </span>{" "}
+                    · {LANE_LABELS[r.lane as LaneName] ?? r.lane}
                   </Row>
                   {r.detail && (
                     <div className="mt-2 rounded-lg border border-destructive/20 bg-background/60 p-2.5">

@@ -21,6 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { StatusPill } from "@/components/ui-ext/StatusPill";
 import { MoneyText } from "@/components/ui-ext/MoneyText";
 import { useCaseDetail, useCaseAction } from "@/lib/hooks";
+import { usePerms } from "@/lib/auth/context";
 import { formatDateTime, formatINR, titleCase } from "@/lib/format";
 import { LANE_LABELS, type LaneName } from "@/lib/types";
 import type { TimelineItem } from "@/lib/api-types";
@@ -36,6 +37,7 @@ const KIND_ICON = {
 export function CaseDetailView({ id }: { id: string }) {
   const { data, isLoading, isError } = useCaseDetail(id);
   const action = useCaseAction();
+  const perms = usePerms();
   const [note, setNote] = useState("");
 
   if (isLoading) {
@@ -78,8 +80,8 @@ export function CaseDetailView({ id }: { id: string }) {
       </Link>
 
       <PageHeader
-        title={c.entityId}
-        description={`${LANE_LABELS[c.lane as LaneName] ?? c.lane} · decision log`}
+        title={c.customerName || c.entityId}
+        description={`${c.entityId} · ${LANE_LABELS[c.lane as LaneName] ?? c.lane} · decision log`}
         actions={
           <div className="flex items-center gap-2">
             <StatusPill status={c.currentState} />
@@ -179,31 +181,40 @@ export function CaseDetailView({ id }: { id: string }) {
                 Recovered {formatINR(c.recoveryAttribution)}
               </div>
             )}
-            <Textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Add a note (optional)…"
-              rows={3}
-              className="mb-3"
-            />
-            <div className="grid grid-cols-2 gap-2">
-              <Button onClick={() => run("approve")} disabled={action.isPending}>
-                Approve
-              </Button>
-              <Button variant="outline" onClick={() => run("escalate")} disabled={action.isPending}>
-                Escalate
-              </Button>
-              <Button variant="outline" onClick={() => run("hold")} disabled={action.isPending}>
-                Hold
-              </Button>
-              <Button variant="destructive" onClick={() => run("reject")} disabled={action.isPending}>
-                Reject
-              </Button>
-            </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              Approving executes the action, then records a recovery only after re-reading a
-              verified capture.
-            </p>
+            {perms.approveCases ? (
+              <>
+                <Textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="Add a note (optional)…"
+                  rows={3}
+                  className="mb-3"
+                />
+                <div className="grid grid-cols-2 gap-2">
+                  <Button onClick={() => run("approve")} disabled={action.isPending}>
+                    Approve
+                  </Button>
+                  <Button variant="outline" onClick={() => run("escalate")} disabled={action.isPending}>
+                    Escalate
+                  </Button>
+                  <Button variant="outline" onClick={() => run("hold")} disabled={action.isPending}>
+                    Hold
+                  </Button>
+                  <Button variant="destructive" onClick={() => run("reject")} disabled={action.isPending}>
+                    Reject
+                  </Button>
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Approving executes the action, then records a recovery only after re-reading a
+                  verified capture.
+                </p>
+              </>
+            ) : (
+              <p className="rounded-lg bg-muted/60 p-3 text-sm text-muted-foreground">
+                Read-only access. Case actions are available to Admins and Recovery
+                Operators.
+              </p>
+            )}
           </Section>
 
           <Section title="Case facts">

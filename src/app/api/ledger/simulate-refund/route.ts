@@ -1,13 +1,18 @@
+import { NextResponse } from "next/server";
 import { parseJson, ok, badRequest } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { SimulateRefundSchema } from "@/lib/schemas";
 import { recordRefund, computeTotals } from "@/lib/services/ledger";
+import { sessionWithPerm } from "@/lib/auth/current";
 
 /**
  * Simulate a refund landing on a recovered case. Appends a NEGATIVE ledger
  * entry (append-only) so net auto-corrects — the recovery is never edited.
  */
 export async function POST(request: Request) {
+  if (!(await sessionWithPerm("ledgerTools"))) {
+    return NextResponse.json({ error: "Not permitted for your role" }, { status: 403 });
+  }
   const parsed = await parseJson(SimulateRefundSchema, request);
   if (!parsed.ok) return parsed.res;
 

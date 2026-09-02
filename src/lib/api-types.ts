@@ -44,7 +44,7 @@ export type ApprovalItem = {
 export type ApprovalsResponse = { items: ApprovalItem[]; total: number };
 
 export type LedgerEntryWithCase = LedgerEntry & {
-  case: { lane: string; entityId: string };
+  case: { lane: string; entityId: string; customerName: string };
 };
 export type LedgerResponse = {
   entries: LedgerEntryWithCase[];
@@ -62,6 +62,7 @@ export type Refusal = {
   caseId: string;
   lane: string;
   entityId: string;
+  customerName: string;
   createdAt: string;
   detail?: string;
 };

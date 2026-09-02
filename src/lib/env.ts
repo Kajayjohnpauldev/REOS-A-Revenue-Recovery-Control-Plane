@@ -13,6 +13,9 @@ const EnvSchema = z.object({
   RAZORPAY_KEY_ID: z.string().default(""),
   RAZORPAY_KEY_SECRET: z.string().default(""),
   RAZORPAY_WEBHOOK_SECRET: z.string().default(""),
+  AUTH_SECRET: z.string().default("revivalos-dev-secret-change-me"),
+  GEMINI_API_KEY: z.string().default(""),
+  GEMINI_MODEL: z.string().default("gemini-2.0-flash"),
   NODE_ENV: z.string().default("development"),
 });
 
@@ -22,6 +25,8 @@ export const env: Env = EnvSchema.parse(process.env);
 
 /** True when the AI provider is the offline deterministic mock. */
 export const isAiMock = env.AI_PROVIDER === "mock" || !env.OPENAI_API_KEY;
+/** True when the Gemini help assistant has a key configured. */
+export const hasGemini = !!env.GEMINI_API_KEY;
 /** True when the payments provider is the offline fixtures mock. */
 export const isPaymentsMock =
   env.PAYMENTS_PROVIDER === "mock" || !env.RAZORPAY_KEY_SECRET;
