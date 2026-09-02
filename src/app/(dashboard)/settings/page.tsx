@@ -46,6 +46,28 @@ export default function SettingsPage() {
   });
   const [name, setName] = useState("");
   const [geminiKey, setGeminiKey] = useState("");
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<{ ok: boolean; error?: string; model?: string } | null>(null);
+
+  const runTest = async () => {
+    setTesting(true);
+    setTestResult(null);
+    try {
+      const r = await fetch("/api/settings/test-gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ apiKey: geminiKey || undefined }),
+      });
+      const d = await r.json();
+      setTestResult(d);
+      if (d.ok) toast.success(`Gemini is working (${d.model})`);
+      else toast.error("Gemini test failed");
+    } catch {
+      setTestResult({ ok: false, error: "request failed" });
+    } finally {
+      setTesting(false);
+    }
+  };
   useEffect(() => {
     if (data?.merchant && !name) setName(data.merchant.name);
   }, [data, name]);
@@ -157,14 +179,28 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
-          <a
-            href="https://aistudio.google.com/app/apikey"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative mt-3 inline-flex items-center gap-1 text-xs font-medium text-accent-blue hover:underline"
-          >
-            Get a free key from Google AI Studio <ExternalLink className="size-3" />
-          </a>
+          <div className="relative mt-3 flex flex-wrap items-center gap-3">
+            <a
+              href="https://aistudio.google.com/app/apikey"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs font-medium text-accent-blue hover:underline"
+            >
+              Get a free key from Google AI Studio <ExternalLink className="size-3" />
+            </a>
+            <Button size="xs" variant="outline" onClick={runTest} disabled={testing}>
+              {testing ? "Testing…" : "Test connection"}
+            </Button>
+            {testResult && (
+              <span
+                className={`text-xs font-medium ${testResult.ok ? "text-money-recovered" : "text-destructive"}`}
+              >
+                {testResult.ok
+                  ? `✓ Working (${testResult.model})`
+                  : `✗ ${testResult.error}`}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 

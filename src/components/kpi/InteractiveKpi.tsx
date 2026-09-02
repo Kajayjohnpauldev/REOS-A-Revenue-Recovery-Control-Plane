@@ -27,6 +27,32 @@ const BAR: Record<Variant, string> = {
   neutral: "bg-foreground/60",
 };
 
+function MiniBars({
+  data,
+  stroke,
+}: {
+  data: { label?: string; value: number }[];
+  stroke: string;
+}) {
+  const max = Math.max(...data.map((d) => Math.abs(d.value)), 1);
+  return (
+    <div className="flex h-9 items-end gap-1.5">
+      {data.map((d, i) => (
+        <div
+          key={i}
+          className="flex-1 rounded-t-sm"
+          style={{
+            height: `${Math.max(8, (Math.abs(d.value) / max) * 100)}%`,
+            background: stroke,
+            opacity: 0.55 + (i / Math.max(1, data.length - 1)) * 0.4,
+          }}
+          title={d.label}
+        />
+      ))}
+    </div>
+  );
+}
+
 function Sparkline({ data, stroke }: { data: number[]; stroke: string }) {
   if (data.length < 2) return null;
   const w = 120;
@@ -61,6 +87,7 @@ export function InteractiveKpi({
   caption,
   href,
   series,
+  bars,
   hint,
   icon,
 }: {
@@ -70,6 +97,7 @@ export function InteractiveKpi({
   caption?: ReactNode;
   href: string;
   series?: number[];
+  bars?: { label?: string; value: number }[];
   hint?: string;
   icon?: ReactNode;
 }) {
@@ -103,15 +131,19 @@ export function InteractiveKpi({
       {caption && <p className="mt-2 text-xs text-muted-foreground">{caption}</p>}
 
       <AnimatePresence>
-        {hover && series && series.length > 1 && (
+        {hover && ((bars && bars.length > 0) || (series && series.length > 1)) && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="pointer-events-none absolute inset-x-3 bottom-3 rounded-xl border bg-background/70 p-2.5 shadow-lg backdrop-blur-md"
+            className="pointer-events-none absolute inset-x-3 bottom-3 rounded-xl border bg-background/75 p-2.5 shadow-lg backdrop-blur-md"
           >
-            <Sparkline data={series} stroke={STROKE[variant]} />
+            {bars && bars.length > 0 ? (
+              <MiniBars data={bars} stroke={STROKE[variant]} />
+            ) : (
+              <Sparkline data={series ?? []} stroke={STROKE[variant]} />
+            )}
             <p className="mt-1 flex items-center justify-between text-[10.5px] text-muted-foreground">
               <span>{hint ?? "trend"}</span>
               <span className="font-medium">double-click to open →</span>

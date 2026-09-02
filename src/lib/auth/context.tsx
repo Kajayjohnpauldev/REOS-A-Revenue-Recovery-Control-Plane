@@ -9,6 +9,7 @@ export type SessionUser = {
   email: string;
   role: Role;
   title: string | null;
+  avatarUrl: string;
 };
 
 const SessionContext = createContext<SessionUser | null>(null);

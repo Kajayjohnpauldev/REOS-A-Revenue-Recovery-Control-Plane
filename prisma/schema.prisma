@@ -37,6 +37,7 @@ model User {
   email        String   @unique
   role         String   @default("operator") // admin | operator | analyst | auditor
   title        String?
+  avatarUrl    String   @default("")
   passwordHash String   @default("")
   createdAt    DateTime @default(now())
 }

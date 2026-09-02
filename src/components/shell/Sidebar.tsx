@@ -18,6 +18,7 @@ import {
   PanelLeftOpen,
   LogOut,
   ChevronsUpDown,
+  UserRound,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo, LogoMark } from "@/components/brand/Logo";
@@ -119,6 +120,13 @@ export function Sidebar() {
                 <p className="truncate text-xs text-muted-foreground">{session.email}</p>
               </div>
               <div className="my-1 h-px bg-border" />
+              <Link
+                href="/profile"
+                onClick={() => setMenuOpen(false)}
+                className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm transition-colors hover:bg-accent"
+              >
+                <UserRound className="size-4" /> Your profile
+              </Link>
               <button
                 onClick={logout}
                 className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-destructive transition-colors hover:bg-destructive/10"
@@ -136,8 +144,13 @@ export function Sidebar() {
             collapsed && "justify-center px-0",
           )}
         >
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-foreground text-xs font-semibold text-background">
-            {initials}
+          <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-foreground text-xs font-semibold text-background">
+            {session.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={session.avatarUrl} alt="" className="size-full object-cover" />
+            ) : (
+              initials
+            )}
           </div>
           {!collapsed && (
             <>

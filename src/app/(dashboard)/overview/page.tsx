@@ -16,7 +16,7 @@ import { MoneyText } from "@/components/ui-ext/MoneyText";
 import { RecoveryTrendChart } from "@/components/charts/RecoveryTrendChart";
 import { LaneDonut } from "@/components/charts/LaneDonut";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useMetrics, useApprovals } from "@/lib/hooks";
+import { useMetrics, useApprovals, useCases } from "@/lib/hooks";
 import { formatINRShort, formatINR, formatAge, titleCase } from "@/lib/format";
 import { LANE_LABELS, type LaneName } from "@/lib/types";
 
@@ -37,6 +37,17 @@ export default function OverviewPage() {
   const trend = metrics.data?.trend ?? [];
   const recoveredSeries = trend.map((t) => t.recovered);
   const netSeries = trend.map((t) => t.net);
+
+  const casesQ = useCases("");
+  const topOpen = (casesQ.data?.cases ?? [])
+    .filter(
+      (c) =>
+        c.recoveryAttribution === 0 &&
+        c.approvalState !== "approved" &&
+        c.reasonCode !== "already_paid" &&
+        c.proposedAction !== "noop",
+    )
+    .slice(0, 5);
 
   return (
     <div className="space-y-6">
@@ -59,8 +70,8 @@ export default function OverviewPage() {
               variant="risk"
               caption={`${m.counts.total - m.counts.recovered} open cases`}
               href="/cases"
-              series={recoveredSeries}
-              hint="recovery trend"
+              bars={lanes.map((l) => ({ label: l.lane, value: l.atRiskValue }))}
+              hint="at-risk by lane"
             />
             <InteractiveKpi
               label="Recovered (gross)"
@@ -77,8 +88,11 @@ export default function OverviewPage() {
               variant="net"
               caption="vs matched holdout baseline"
               href="/metrics"
-              series={netSeries}
-              hint="net trend"
+              bars={[
+                { label: "Gross", value: m.grossRecovered },
+                { label: "Incremental", value: m.incrementalRecovered },
+              ]}
+              hint="gross vs incremental"
             />
             <InteractiveKpi
               label="Net recovered"
@@ -96,7 +110,19 @@ export default function OverviewPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Left: trend + lane tiles */}
         <div className="space-y-6 lg:col-span-2">
-          <section className="rounded-xl border bg-card p-5 shadow-sm">
+          <section className="rounded-2xl border bg-card p-5 shadow-sm">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-sm font-semibold">At-risk value by lane</h2>
+              <span className="text-xs text-muted-foreground">where the risk sits</span>
+            </div>
+            {metrics.isLoading ? (
+              <Skeleton className="h-52 w-full" />
+            ) : (
+              <LaneDonut data={lanes} metric="atRiskValue" />
+            )}
+          </section>
+
+          <section className="rounded-2xl border bg-card p-5 shadow-sm">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-sm font-semibold">Recovery over time</h2>
               <span className="text-xs text-muted-foreground">
@@ -107,18 +133,6 @@ export default function OverviewPage() {
               <Skeleton className="h-60 w-full" />
             ) : (
               <RecoveryTrendChart data={metrics.data?.trend ?? []} />
-            )}
-          </section>
-
-          <section className="rounded-xl border bg-card p-5 shadow-sm">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm font-semibold">At-risk value by lane</h2>
-              <span className="text-xs text-muted-foreground">where the risk sits</span>
-            </div>
-            {metrics.isLoading ? (
-              <Skeleton className="h-52 w-full" />
-            ) : (
-              <LaneDonut data={lanes} metric="atRiskValue" />
             )}
           </section>
 
@@ -147,6 +161,60 @@ export default function OverviewPage() {
               );
             })}
           </div>
+
+          {/* Top opportunities — highest-value open cases */}
+          <section className="overflow-hidden rounded-2xl border bg-card shadow-sm">
+            <div className="flex items-center justify-between border-b px-5 py-3">
+              <div>
+                <h2 className="text-sm font-semibold">Top opportunities</h2>
+                <p className="text-xs text-muted-foreground">
+                  Highest-value open cases to work next
+                </p>
+              </div>
+              <Link href="/cases" className="text-xs text-primary hover:underline">
+                All cases
+              </Link>
+            </div>
+            <div className="divide-y">
+              {casesQ.isLoading ? (
+                <div className="p-5">
+                  <Skeleton className="h-16 w-full" />
+                </div>
+              ) : topOpen.length ? (
+                topOpen.map((c, i) => (
+                  <Link
+                    key={c.id}
+                    href={`/cases/${c.id}`}
+                    className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-accent/40"
+                  >
+                    <span className="w-5 shrink-0 text-sm font-semibold tabular-nums text-muted-foreground">
+                      {i + 1}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">
+                        {c.customerName || c.entityId}
+                      </p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {LANE_LABELS[c.lane as LaneName] ?? c.lane} ·{" "}
+                        {titleCase(c.proposedAction ?? "review")}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <MoneyText value={c.amount} variant="risk" short />
+                      <p className="text-[11px] text-muted-foreground">
+                        {Math.round((c.confidence ?? 0) * 100)}% conf.
+                      </p>
+                    </div>
+                    <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
+                  </Link>
+                ))
+              ) : (
+                <p className="px-5 py-6 text-sm text-muted-foreground">
+                  No open opportunities — nicely done.
+                </p>
+              )}
+            </div>
+          </section>
         </div>
 
         {/* Right: approvals + activity */}

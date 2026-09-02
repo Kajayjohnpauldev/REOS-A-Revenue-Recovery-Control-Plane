@@ -19,6 +19,8 @@ export async function proxy(req: NextRequest) {
 
   // Role-based page gating. API permission checks live in the route handlers.
   if (!pathname.startsWith("/api")) {
+    // Everyone can reach their own profile.
+    if (pathname.startsWith("/profile")) return NextResponse.next();
     if (pathname === "/" || !canAccess(session.role, pathname)) {
       const home = ROLE_HOME[asRole(session.role)];
       if (home !== pathname) {
