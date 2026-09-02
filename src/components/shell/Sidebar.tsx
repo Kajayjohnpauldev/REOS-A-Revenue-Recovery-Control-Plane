@@ -136,7 +136,7 @@ export function Sidebar() {
             collapsed && "justify-center px-0",
           )}
         >
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent-blue text-xs font-semibold text-white">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-foreground text-xs font-semibold text-background">
             {initials}
           </div>
           {!collapsed && (

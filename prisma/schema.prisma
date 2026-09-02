@@ -21,10 +21,11 @@ datasource db {
 }
 
 model Merchant {
-  id          String   @id @default(cuid())
-  name        String
-  environment String   @default("test")
-  createdAt   DateTime @default(now())
+  id           String   @id @default(cuid())
+  name         String
+  environment  String   @default("test")
+  geminiApiKey String   @default("")
+  createdAt    DateTime @default(now())
 
   policies Policy[]
   cases    Case[]

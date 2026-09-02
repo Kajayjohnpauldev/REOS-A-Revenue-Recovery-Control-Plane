@@ -52,82 +52,83 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ── Light: near-white surfaces, near-black ink. Colour is reserved for data. ── */
 :root {
-  --background: oklch(0.995 0.001 260);
-  --foreground: oklch(0.16 0.01 260);
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.17 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.16 0.01 260);
+  --card-foreground: oklch(0.17 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.16 0.01 260);
-  /* Accent = RevivalOS deep blue #0b3d91 */
-  --primary: oklch(0.37 0.13 264);
+  --popover-foreground: oklch(0.17 0 0);
+  --primary: oklch(0.19 0 0);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0.004 260);
-  --secondary-foreground: oklch(0.24 0.02 264);
-  --muted: oklch(0.968 0.004 260);
-  --muted-foreground: oklch(0.52 0.02 260);
-  --accent: oklch(0.96 0.01 264);
-  --accent-foreground: oklch(0.37 0.13 264);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.916 0.005 260);
-  --input: oklch(0.916 0.005 260);
-  --ring: oklch(0.37 0.13 264);
-  --accent-blue: oklch(0.45 0.15 264);
-  --money-recovered: oklch(0.55 0.15 152);
-  --money-risk: oklch(0.66 0.15 66);
-  --money-net: oklch(0.45 0.15 264);
-  --chart-1: oklch(0.45 0.15 264);
-  --chart-2: oklch(0.55 0.15 152);
-  --chart-3: oklch(0.66 0.15 66);
-  --chart-4: oklch(0.55 0.14 300);
-  --chart-5: oklch(0.6 0.12 200);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0.003 260);
-  --sidebar-foreground: oklch(0.24 0.01 260);
-  --sidebar-primary: oklch(0.37 0.13 264);
+  --secondary: oklch(0.965 0 0);
+  --secondary-foreground: oklch(0.2 0 0);
+  --muted: oklch(0.968 0 0);
+  --muted-foreground: oklch(0.505 0 0);
+  --accent: oklch(0.955 0 0);
+  --accent-foreground: oklch(0.2 0 0);
+  --destructive: oklch(0.585 0.22 27.3);
+  --border: oklch(0.915 0 0);
+  --input: oklch(0.915 0 0);
+  --ring: oklch(0.19 0 0);
+  --accent-blue: oklch(0.55 0.19 258);
+  --money-recovered: oklch(0.6 0.14 155);
+  --money-risk: oklch(0.68 0.15 66);
+  --money-net: oklch(0.55 0.19 258);
+  --chart-1: oklch(0.55 0.19 258);
+  --chart-2: oklch(0.62 0.15 155);
+  --chart-3: oklch(0.7 0.15 66);
+  --chart-4: oklch(0.58 0.19 300);
+  --chart-5: oklch(0.62 0.13 210);
+  --radius: 0.7rem;
+  --sidebar: oklch(0.99 0 0);
+  --sidebar-foreground: oklch(0.3 0 0);
+  --sidebar-primary: oklch(0.19 0 0);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.95 0.015 264);
-  --sidebar-accent-foreground: oklch(0.37 0.13 264);
-  --sidebar-border: oklch(0.91 0.005 260);
-  --sidebar-ring: oklch(0.37 0.13 264);
+  --sidebar-accent: oklch(0.95 0 0);
+  --sidebar-accent-foreground: oklch(0.19 0 0);
+  --sidebar-border: oklch(0.92 0 0);
+  --sidebar-ring: oklch(0.19 0 0);
 }
 
+/* ── Dark: near-black surfaces, near-white ink + white primary (Apple-ish). ── */
 .dark {
-  --background: oklch(0.17 0.012 260);
-  --foreground: oklch(0.97 0.003 260);
-  --card: oklch(0.213 0.012 260);
-  --card-foreground: oklch(0.97 0.003 260);
-  --popover: oklch(0.213 0.012 260);
-  --popover-foreground: oklch(0.97 0.003 260);
-  --primary: oklch(0.62 0.16 264);
-  --primary-foreground: oklch(0.145 0.02 260);
-  --secondary: oklch(0.27 0.015 260);
-  --secondary-foreground: oklch(0.97 0.003 260);
-  --muted: oklch(0.27 0.015 260);
-  --muted-foreground: oklch(0.7 0.02 260);
-  --accent: oklch(0.3 0.03 264);
-  --accent-foreground: oklch(0.9 0.05 264);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.97 0 0);
+  --card: oklch(0.192 0 0);
+  --card-foreground: oklch(0.97 0 0);
+  --popover: oklch(0.192 0 0);
+  --popover-foreground: oklch(0.97 0 0);
+  --primary: oklch(0.97 0 0);
+  --primary-foreground: oklch(0.18 0 0);
+  --secondary: oklch(0.25 0 0);
+  --secondary-foreground: oklch(0.97 0 0);
+  --muted: oklch(0.242 0 0);
+  --muted-foreground: oklch(0.68 0 0);
+  --accent: oklch(0.26 0 0);
+  --accent-foreground: oklch(0.97 0 0);
+  --destructive: oklch(0.7 0.19 22.2);
+  --border: oklch(1 0 0 / 11%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.62 0.16 264);
-  --accent-blue: oklch(0.7 0.16 264);
-  --money-recovered: oklch(0.74 0.16 154);
-  --money-risk: oklch(0.8 0.14 74);
-  --money-net: oklch(0.7 0.16 264);
-  --chart-1: oklch(0.7 0.16 264);
-  --chart-2: oklch(0.74 0.16 154);
-  --chart-3: oklch(0.8 0.14 74);
-  --chart-4: oklch(0.72 0.15 300);
-  --chart-5: oklch(0.72 0.12 200);
-  --sidebar: oklch(0.2 0.012 260);
-  --sidebar-foreground: oklch(0.95 0.003 260);
-  --sidebar-primary: oklch(0.62 0.16 264);
-  --sidebar-primary-foreground: oklch(0.145 0.02 260);
-  --sidebar-accent: oklch(0.3 0.03 264);
-  --sidebar-accent-foreground: oklch(0.9 0.05 264);
+  --ring: oklch(0.87 0 0);
+  --accent-blue: oklch(0.7 0.16 258);
+  --money-recovered: oklch(0.74 0.15 155);
+  --money-risk: oklch(0.8 0.14 72);
+  --money-net: oklch(0.7 0.16 258);
+  --chart-1: oklch(0.7 0.16 258);
+  --chart-2: oklch(0.75 0.15 155);
+  --chart-3: oklch(0.8 0.14 72);
+  --chart-4: oklch(0.72 0.16 300);
+  --chart-5: oklch(0.74 0.13 210);
+  --sidebar: oklch(0.17 0 0);
+  --sidebar-foreground: oklch(0.9 0 0);
+  --sidebar-primary: oklch(0.97 0 0);
+  --sidebar-primary-foreground: oklch(0.18 0 0);
+  --sidebar-accent: oklch(0.26 0 0);
+  --sidebar-accent-foreground: oklch(0.97 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.62 0.16 264);
+  --sidebar-ring: oklch(0.87 0 0);
 }
 
 @layer base {
@@ -140,4 +141,41 @@
   html {
     @apply font-sans;
   }
+  /* Premium: crisp text rendering + smooth interaction transitions. */
+  button,
+  a,
+  [role="button"] {
+    @apply transition-[color,background-color,border-color,box-shadow,transform] duration-200;
+  }
 }
+
+/* ── Motion primitives ─────────────────────────────────────────────────── */
+@keyframes reos-aurora {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(2%, -3%, 0) scale(1.08); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes reos-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes reos-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.reos-aurora { animation: reos-aurora 20s ease-in-out infinite; }
+.reos-rise { animation: reos-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.reos-float { animation: reos-float 4s ease-in-out infinite; }
+
+/* Cursor spotlight layer — a faint radial that follows the pointer. */
+.reos-cursor-glow {
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 40%),
+    color-mix(in oklch, var(--accent-blue) 12%, transparent),
+    transparent 62%
+  );
+}
+
+/* Tabular numerals for money everywhere they appear. */
+.reos-tnum { font-variant-numeric: tabular-nums; }

@@ -11,7 +11,7 @@ import {
   Ban,
 } from "lucide-react";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { KpiCard } from "@/components/kpi/KpiCard";
+import { InteractiveKpi } from "@/components/kpi/InteractiveKpi";
 import { MoneyText } from "@/components/ui-ext/MoneyText";
 import { RecoveryTrendChart } from "@/components/charts/RecoveryTrendChart";
 import { LaneDonut } from "@/components/charts/LaneDonut";
@@ -34,6 +34,9 @@ export default function OverviewPage() {
   const m = metrics.data?.metrics;
   const lanes = metrics.data?.lanes ?? [];
   const activity = metrics.data?.activity ?? [];
+  const trend = metrics.data?.trend ?? [];
+  const recoveredSeries = trend.map((t) => t.recovered);
+  const netSeries = trend.map((t) => t.net);
 
   return (
     <div className="space-y-6">
@@ -42,37 +45,49 @@ export default function OverviewPage() {
         description="At-risk value, verified recovery, and live agent activity for your merchant."
       />
 
-      {/* KPI row */}
+      {/* KPI row — hover for a mini-trend, double-click to open */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.isLoading || !m ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-32 rounded-xl" />
+            <Skeleton key={i} className="h-36 rounded-2xl" />
           ))
         ) : (
           <>
-            <KpiCard
+            <InteractiveKpi
               label="At-risk value"
               value={formatINRShort(m.atRiskValue)}
               variant="risk"
               caption={`${m.counts.total - m.counts.recovered} open cases`}
+              href="/cases"
+              series={recoveredSeries}
+              hint="recovery trend"
             />
-            <KpiCard
+            <InteractiveKpi
               label="Recovered (gross)"
               value={formatINRShort(m.grossRecovered)}
               variant="recovered"
               caption={`${m.counts.recovered} verified recoveries`}
+              href="/ledger"
+              series={recoveredSeries}
+              hint="gross recovered"
             />
-            <KpiCard
+            <InteractiveKpi
               label="Incremental recovered"
               value={formatINRShort(m.incrementalRecovered)}
               variant="net"
               caption="vs matched holdout baseline"
+              href="/metrics"
+              series={netSeries}
+              hint="net trend"
             />
-            <KpiCard
+            <InteractiveKpi
               label="Net recovered"
               value={formatINRShort(m.netRecovered)}
               variant="net"
               caption={`${formatINR(m.totals.refunds)} refunded back out`}
+              href="/ledger"
+              series={netSeries}
+              hint="net recovered"
             />
           </>
         )}

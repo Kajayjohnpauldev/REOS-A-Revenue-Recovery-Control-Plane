@@ -6,7 +6,7 @@ import { SessionProvider } from "@/lib/auth/context";
 import { asRole } from "@/lib/auth/roles";
 import { Sidebar } from "@/components/shell/Sidebar";
 import { TopBar } from "@/components/shell/TopBar";
-import { EnvBanner } from "@/components/shell/EnvBanner";
+import { CursorGlow } from "@/components/shell/CursorGlow";
 import { AssistantOrb } from "@/components/assistant/AssistantOrb";
 
 export const dynamic = "force-dynamic";
@@ -33,12 +33,12 @@ export default async function DashboardLayout({
 
   return (
     <SessionProvider value={sessionUser}>
-      <div className="flex min-h-dvh bg-muted/30">
+      <div className="relative flex min-h-dvh bg-background">
+        <CursorGlow />
         <Sidebar />
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="relative z-10 flex min-w-0 flex-1 flex-col">
           <TopBar pendingApprovals={pendingApprovals} />
-          <EnvBanner />
-          <main className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-6 sm:px-6 lg:px-8">
+          <main className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-7 sm:px-6 lg:px-10">
             {children}
           </main>
         </div>

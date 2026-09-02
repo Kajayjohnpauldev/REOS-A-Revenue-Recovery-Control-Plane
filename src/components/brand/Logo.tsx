@@ -1,55 +1,56 @@
 import { cn } from "@/lib/utils";
 
 /**
- * RevivalOS mark — a rounded gradient badge with a "revival pulse": a signal
- * that dips (revenue at risk) and spikes back up (recovered).
+ * ReOS monogram — a refined graphite tile (adapts to theme). Luxurious,
+ * minimal, no pictorial motif. "Re" for Revival; the wordmark reads ReOS.
  */
 export function LogoMark({
   className,
-  gradientId = "revival-grad",
+  textClassName = "text-[13px]",
 }: {
   className?: string;
-  gradientId?: string;
+  textClassName?: string;
 }) {
   return (
-    <svg viewBox="0 0 32 32" className={className} aria-hidden="true">
-      <defs>
-        <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#3b6fe0" />
-          <stop offset="55%" stopColor="#1e50c8" />
-          <stop offset="100%" stopColor="#0b3d91" />
-        </linearGradient>
-      </defs>
-      <rect x="0" y="0" width="32" height="32" rx="9" fill={`url(#${gradientId})`} />
-      <path
-        d="M5 19 L11 19 L13.5 12 L16.5 23 L19 15.5 L21 19 L27 19"
-        fill="none"
-        stroke="white"
-        strokeWidth="2.1"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <span
+      className={cn(
+        "relative grid aspect-square shrink-0 place-items-center rounded-[9px] bg-gradient-to-br from-foreground to-foreground/75 text-background shadow-sm ring-1 ring-black/10 dark:ring-white/15",
+        className,
+      )}
+      aria-hidden="true"
+    >
+      <span className={cn("font-semibold leading-none tracking-tight", textClassName)}>
+        Re
+      </span>
+      <span className="pointer-events-none absolute inset-x-1.5 top-1 h-1/3 rounded-t-[6px] bg-white/10" />
+    </span>
   );
 }
 
 export function Logo({
   className,
-  markClassName,
-  showWordmark = true,
+  showSubtitle = false,
+  markClassName = "size-8",
+  markTextClassName,
 }: {
   className?: string;
+  showSubtitle?: boolean;
   markClassName?: string;
-  showWordmark?: boolean;
+  markTextClassName?: string;
 }) {
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <LogoMark className={cn("size-8 shrink-0 drop-shadow-sm", markClassName)} />
-      {showWordmark && (
+      <LogoMark className={markClassName} textClassName={markTextClassName} />
+      <span className="flex flex-col leading-none">
         <span className="text-[15px] font-semibold tracking-tight">
-          Revival<span className="text-primary">OS</span>
+          Re<span className="text-muted-foreground">OS</span>
         </span>
-      )}
+        {showSubtitle && (
+          <span className="mt-1 text-[9.5px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
+            Revival Operating System
+          </span>
+        )}
+      </span>
     </span>
   );
 }
