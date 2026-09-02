@@ -19,19 +19,38 @@ Key facts:
 - Roles: Admin (full + Settings), Recovery Operator (cases/approvals), Finance Analyst (ledger/metrics), Auditor (read-only).
 If someone just says "hey" or "how are you", greet them warmly and briefly, then offer to help — do NOT recite the whole feature list.`;
 
-const FALLBACK_MODELS = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-flash-latest"];
+const FALLBACK_MODELS = [
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
+  "gemini-1.5-flash",
+  "gemini-flash-latest",
+];
+const API_VERSIONS = ["v1beta", "v1"];
+
+/** Strip common copy-paste junk (quotes, "Bearer ", "key=", whitespace). */
+function sanitizeKey(k: string): string {
+  return k
+    .trim()
+    .replace(/^["'`]+|["'`]+$/g, "")
+    .replace(/^Bearer\s+/i, "")
+    .replace(/^key\s*=\s*/i, "")
+    .trim();
+}
 
 async function callGemini(
   model: string,
+  version: string,
   apiKey: string,
   prompt: string,
 ): Promise<string> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(
-    apiKey,
-  )}`;
+  // Use the x-goog-api-key header (recommended) rather than a ?key= query param.
+  const url = `https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent`;
   const res = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": apiKey,
+    },
     body: JSON.stringify({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       generationConfig: { temperature: 0.5, maxOutputTokens: 500 },
@@ -73,16 +92,19 @@ async function askGemini(
   apiKey: string,
   model: string,
 ): Promise<string> {
+  const key = sanitizeKey(apiKey);
   const prompt = `${SYSTEM}\n\n${
     page && page !== "/" ? `[The user is currently on the ${page.replace("/", "")} screen]\n` : ""
   }User: ${message}`;
   const models = Array.from(new Set([model, ...FALLBACK_MODELS])).filter(Boolean);
   let lastErr = "unknown error";
-  for (const m of models) {
-    try {
-      return await callGemini(m, apiKey, prompt);
-    } catch (e) {
-      lastErr = e instanceof Error ? e.message : String(e);
+  for (const v of API_VERSIONS) {
+    for (const m of models) {
+      try {
+        return await callGemini(m, v, key, prompt);
+      } catch (e) {
+        lastErr = e instanceof Error ? e.message : String(e);
+      }
     }
   }
   throw new Error(lastErr);
@@ -93,14 +115,18 @@ export async function testGemini(
   apiKey: string,
   model = env.GEMINI_MODEL,
 ): Promise<{ ok: boolean; model?: string; error?: string }> {
+  const key = sanitizeKey(apiKey);
+  if (!key) return { ok: false, error: "No key provided" };
   const models = Array.from(new Set([model, ...FALLBACK_MODELS])).filter(Boolean);
   let lastErr = "unknown error";
-  for (const m of models) {
-    try {
-      await callGemini(m, apiKey, "Reply with exactly: OK");
-      return { ok: true, model: m };
-    } catch (e) {
-      lastErr = e instanceof Error ? e.message : String(e);
+  for (const v of API_VERSIONS) {
+    for (const m of models) {
+      try {
+        await callGemini(m, v, key, "Reply with exactly: OK");
+        return { ok: true, model: `${m} · ${v}` };
+      } catch (e) {
+        lastErr = e instanceof Error ? e.message : String(e);
+      }
     }
   }
   return { ok: false, error: lastErr };

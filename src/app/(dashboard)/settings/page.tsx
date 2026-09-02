@@ -200,6 +200,16 @@ export default function SettingsPage() {
                   : `✗ ${testResult.error}`}
               </span>
             )}
+            {testResult &&
+              !testResult.ok &&
+              /403|denied|permission|api.?key|invalid|blocked/i.test(testResult.error ?? "") && (
+                <p className="w-full rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
+                  Google is blocking this key. Create a <strong>brand-new</strong> key at
+                  Google&nbsp;AI&nbsp;Studio (not Cloud Console), make sure the &ldquo;Generative
+                  Language API&rdquo; is enabled for its project, and remove any
+                  HTTP-referrer/IP restrictions on the key. Then paste it above and Save.
+                </p>
+              )}
           </div>
         </div>
       </div>
