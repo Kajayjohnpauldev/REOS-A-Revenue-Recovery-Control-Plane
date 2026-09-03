@@ -251,8 +251,11 @@ src/
 scripts/demo-replay.ts                 CLI: prints gross / incremental / net
 docs/
   architecture.md agents.md metrics.md the six layers · the 7 agents · every formula
+  engineering-guidelines.md            module map + coding standards
   BUILD_BRIEF.md                       the original brief this was built from (reference)
   assets/                              README diagrams & charts (SVG)
+references/                            source research PDFs + build-brief materials
+CONTRIBUTING.md                        standards & getting started
 ```
 
 ---
@@ -260,8 +263,9 @@ docs/
 ## How this was built — the brief
 
 This project was built end-to-end from a detailed, phased brief. That original brief —
-the step-by-step build plan and the laws it had to follow — is captured for reference in
-**[`docs/BUILD_BRIEF.md`](docs/BUILD_BRIEF.md)**. Deeper docs:
+the step-by-step build plan and the laws it had to follow — is captured in
+**[`docs/BUILD_BRIEF.md`](docs/BUILD_BRIEF.md)**, with the source research in
+**[`references/`](references)**. Deeper docs:
 
 - [`docs/architecture.md`](docs/architecture.md) — the six layers + diagram
 - [`docs/agents.md`](docs/agents.md) — the seven agents (AI vs deterministic)
