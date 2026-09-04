@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/banner.svg" alt="ReOS — Revival Operating System" width="100%" />
+  <img src="documents/assets/banner.svg" alt="ReOS — Revival Operating System" width="100%" />
 </p>
 
 <h1 align="center">ReOS · Revival Operating System</h1>
@@ -17,6 +17,14 @@
   <img src="https://img.shields.io/badge/AI-Google%20Gemini-8E75FF?logo=google&logoColor=white" alt="Gemini"/>
   <img src="https://img.shields.io/badge/tests-passing-22c55e" alt="tests"/>
   <img src="https://img.shields.io/badge/runs-offline%20%C2%B7%20zero%20keys-0ea5e9" alt="offline"/>
+</p>
+
+<p align="center">
+  <a href="presentation/"><b>📊 Presentation</b></a> &nbsp;·&nbsp;
+  <a href="documents/"><b>📄 Documents</b></a> &nbsp;·&nbsp;
+  <a href="references/"><b>📚 References</b></a>
+  <br/>
+  <sub>Pitch deck (PPTX), the presentation script + screens PDFs, and the source research — all in the top folders above.</sub>
 </p>
 
 ---
@@ -46,7 +54,7 @@ fallback so it always works).
 
 ## What it looks like
 
-<p align="center"><img src="docs/assets/lane-bars.svg" alt="At-risk vs recovered by lane" width="720"/></p>
+<p align="center"><img src="documents/assets/lane-bars.svg" alt="At-risk vs recovered by lane" width="720"/></p>
 
 **Where the risk sits — at-risk value by lane (₹, live demo dataset):**
 
@@ -249,10 +257,14 @@ src/
   components/                          brand · shell · kpi · charts · assistant (Baymax) · ui · ui-ext
   tests/                               engine + adapters + DB integration tests
 scripts/demo-replay.ts                 CLI: prints gross / incremental / net
-docs/
+presentation/                          the pitch deck — ReOS_Pitch_Deck_v3.pptx
+documents/
   architecture.md agents.md metrics.md the six layers · the 7 agents · every formula
   engineering-guidelines.md            module map + coding standards
   BUILD_BRIEF.md                       the original brief this was built from (reference)
+  ReOS-presentation-script.pdf         short + in-depth spoken demo script
+  ReOS-essential-screens.pdf           screenshots of every screen
+  ReOS-presentation-prompt.md          the prompt used to generate the deck
   assets/                              README diagrams & charts (SVG)
 references/                            source research PDFs + build-brief materials
 CONTRIBUTING.md                        standards & getting started
@@ -264,12 +276,12 @@ CONTRIBUTING.md                        standards & getting started
 
 This project was built end-to-end from a detailed, phased brief. That original brief —
 the step-by-step build plan and the laws it had to follow — is captured in
-**[`docs/BUILD_BRIEF.md`](docs/BUILD_BRIEF.md)**, with the source research in
+**[`documents/BUILD_BRIEF.md`](documents/BUILD_BRIEF.md)**, with the source research in
 **[`references/`](references)**. Deeper docs:
 
-- [`docs/architecture.md`](docs/architecture.md) — the six layers + diagram
-- [`docs/agents.md`](docs/agents.md) — the seven agents (AI vs deterministic)
-- [`docs/metrics.md`](docs/metrics.md) — every metric formula
+- [`documents/architecture.md`](documents/architecture.md) — the six layers + diagram
+- [`documents/agents.md`](documents/agents.md) — the seven agents (AI vs deterministic)
+- [`documents/metrics.md`](documents/metrics.md) — every metric formula
 
 ---
 

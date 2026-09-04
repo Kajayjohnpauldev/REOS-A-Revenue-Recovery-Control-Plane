@@ -33,6 +33,6 @@ npm run dev      # http://localhost:3000
 npm run test     # the credibility core must stay green
 ```
 
-See **[`docs/engineering-guidelines.md`](docs/engineering-guidelines.md)** for the full
+See **[`documents/engineering-guidelines.md`](documents/engineering-guidelines.md)** for the full
 module map and architecture pointers, and **[`README.md`](README.md)** for the product
 overview and demo walkthrough.

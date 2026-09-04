@@ -9,7 +9,7 @@ The source research and the build brief behind **ReOS · Revival Operating Syste
 
 The step-by-step **build brief** this project was executed from — the phased plan, the
 laws, the stack, and the acceptance checklist — is in
-[`../docs/BUILD_BRIEF.md`](../docs/BUILD_BRIEF.md).
+[`../documents/BUILD_BRIEF.md`](../documents/BUILD_BRIEF.md).
 
 > These documents informed the product from day one; they are kept here so anyone can
 > trace exactly how the system was conceived and built end-to-end.

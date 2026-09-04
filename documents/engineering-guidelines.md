@@ -39,7 +39,7 @@ src/
   components/                          brand · shell · kpi · charts · assistant · ui · ui-ext
   tests/                               engine + adapter + DB integration tests
 scripts/demo-replay.ts                 CLI: prints gross / incremental / net
-docs/                                  architecture, agents, metrics, build brief, this file
+documents/                                  architecture, agents, metrics, build brief, this file
 references/                            source research + the build brief materials
 ```
 
